@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 export default function Admin() {
   const [reports, setReports] = useState([]);
   const [search, setSearch] = useState("");
@@ -12,7 +14,7 @@ export default function Admin() {
 
   const fetchReports = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/admin_reports");
+      const res = await axios.get(`${API_URL}/api/admin_reports`);
       setReports(res.data);
     } catch (e) {
       setReports([]);
@@ -22,7 +24,7 @@ export default function Admin() {
   // 승인/취소 버튼 클릭 핸들러
   const handleApprove = async (id) => {
     try {
-      await axios.post("http://localhost:5000/api/admin_approve", {
+      await axios.post(`${API_URL}/api/admin_approve`, {
         id,
         ai_stage: 3,
       });
@@ -33,7 +35,7 @@ export default function Admin() {
   };
   const handleReject = async (id) => {
     try {
-      await axios.post("http://localhost:5000/api/admin_approve", {
+      await axios.post(`${API_URL}/api/admin_approve`, {
         id,
         ai_stage: 5,
       });

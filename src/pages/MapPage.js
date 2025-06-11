@@ -4,6 +4,8 @@ import proj4 from "proj4";
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function geoJsonCoordsToLngLatArray(coords) {
   const epsg3857 = "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0 +y_0=0 +lon_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs";
   const wgs84 = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
@@ -23,7 +25,7 @@ const MapPage = () => {
   };
 
   const loadMarkers = (map) => {
-    fetch('http://localhost:5000/api/reports')
+    fetch(`${API_URL}/api/reports`)
       .then(res => {
         if (!res.ok) throw new Error('API 응답 오류');
         return res.json();

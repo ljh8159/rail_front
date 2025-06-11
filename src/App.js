@@ -30,6 +30,8 @@ import MapPage from './pages/MapPage';
 import LoginPage from './components/LoginPage';
 import SignupPage from './pages/SignupPage';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function App() {
   const [stats, setStats] = useState({ blocked_count: 0, dispatched_count: 0 });
   const [homeReports, setHomeReports] = useState([]);
@@ -63,7 +65,7 @@ function App() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const res = await axios.get('http://localhost:5000/api/report_stats');
+        const res = await axios.get(`${API_URL}/api/report_stats`);
         setStats(res.data);
       } catch (e) {
         setStats({ blocked_count: 0, dispatched_count: 0 });
@@ -76,7 +78,7 @@ function App() {
   useEffect(() => {
     async function fetchHomeReports() {
       try {
-        const res = await axios.get('http://localhost:5000/api/all_reports?limit=3');
+        const res = await axios.get(`${API_URL}/api/all_reports?limit=3`);
         setHomeReports(res.data);
       } catch (e) {
         setHomeReports([]);
@@ -89,7 +91,7 @@ function App() {
   useEffect(() => {
     async function fetchAllHomeReports() {
       try {
-        const res = await axios.get('http://localhost:5000/api/all_reports?limit=100');
+        const res = await axios.get(`${API_URL}/api/all_reports?limit=100`);
         setAllHomeReports(res.data);
       } catch (e) {
         setAllHomeReports([]);
@@ -101,7 +103,7 @@ function App() {
   useEffect(() => {
     async function fetchUserStats() {
       try {
-        const res = await axios.get(`http://localhost:5000/api/user_stats?user_id=${userId}`);
+        const res = await axios.get(`${API_URL}/api/user_stats?user_id=${userId}`);
         setUserStats(res.data);
       } catch (e) {
         setUserStats({ report_count: 0, dispatch_count: 0 });
@@ -114,7 +116,7 @@ function App() {
     // 서비스 이용 이력(신고/출동 내역) 최신 3개 불러오기
     async function fetchUserReports() {
       try {
-        const res = await axios.get(`http://localhost:5000/api/user_reports?user_id=${userId}&limit=3`);
+        const res = await axios.get(`${API_URL}/api/user_reports?user_id=${userId}&limit=3`);
         setUserReports(res.data);
       } catch (e) {
         setUserReports([]);
@@ -127,7 +129,7 @@ function App() {
     // 전체 서비스 이용 이력 불러오기 (더보기용)
     async function fetchAllUserReports() {
       try {
-        const res = await axios.get(`http://localhost:5000/api/user_reports?user_id=${userId}&limit=100`);
+        const res = await axios.get(`${API_URL}/api/user_reports?user_id=${userId}&limit=100`);
         setAllUserReports(res.data);
       } catch (e) {
         setAllUserReports([]);
@@ -140,7 +142,7 @@ function App() {
     // 포인트 불러오기
     async function fetchUserPoint() {
       try {
-        const res = await axios.get(`http://localhost:5000/api/user_point?user_id=${userId}`);
+        const res = await axios.get(`${API_URL}/api/user_point?user_id=${userId}`);
         setUserPoint(res.data.point);
       } catch (e) {
         setUserPoint(0);
@@ -153,7 +155,7 @@ function App() {
   async function getAiStage(photoUrl) {
     try {
       const filename = photoUrl.split('/').pop();
-      const res = await axios.post('http://127.0.0.1:5000/api/predict', { filename });
+      const res = await axios.post(`${API_URL}/api/predict`, { filename });
       return res.data.stage;
     } catch (e) {
       alert('AI 예측에 실패했습니다. 임의로 4단계로 이동합니다.');
@@ -164,7 +166,7 @@ function App() {
   // DB 저장 함수
   async function saveReport({ user_id = "guest", type, photo_filename, location, lat, lng, timestamp, ai_stage, extra, dispatch_user_id, for_userpage_type, for_userpage_stage }) {
     try {
-      await axios.post('http://127.0.0.1:5000/api/report', {
+      await axios.post(`${API_URL}/api/report`, {
         user_id,
         type,
         photo_filename,
@@ -186,7 +188,7 @@ function App() {
   // 기존 신고를 출동/1단계로 업데이트
   async function updateReportToDispatch(location, dispatch_user_id) {
     try {
-      await axios.post('http://127.0.0.1:5000/api/report_update', { location, dispatch_user_id });
+      await axios.post(`${API_URL}/api/report_update`, { location, dispatch_user_id });
     } catch (e) {
       alert('기존 신고 업데이트 실패');
     }
@@ -288,7 +290,7 @@ function App() {
               lat={props.location.state?.lat}
               lng={props.location.state?.lng}
               onSubmit={(filename) => {
-                const photoUrl = `http://127.0.0.1:5000/uploads/${filename}`;
+                const photoUrl = `${API_URL}/uploads/${filename}`;
                 const location = window.__qr_location || "";
                 const lat = window.__qr_lat;
                 const lng = window.__qr_lng;
@@ -392,7 +394,7 @@ function App() {
             <DispatchPhotoUpload
               {...props}
               onSubmit={filename => {
-                const photoUrl = `http://127.0.0.1:5000/uploads/${filename}`;
+                const photoUrl = `${API_URL}/uploads/${filename}`;
                 props.history.push("/dispatch/photo_confirm", { photoUrl });
               }}
             />

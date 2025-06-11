@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 const KAKAO_MAP_KEY = "YOUR_KAKAO_MAP_KEY"; // 실제 키로 교체
+const API_URL = process.env.REACT_APP_API_URL;
 
 function loadKakaoMapScript(callback) {
   if (window.kakao && window.kakao.maps) {
@@ -9,7 +10,7 @@ function loadKakaoMapScript(callback) {
     return;
   }
   const script = document.createElement("script");
-  script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_KEY}&autoload=false`;
+  script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_MAP_KEY}&autoload=false&libraries=services`;
   script.onload = () => {
     window.kakao.maps.load(callback);
   };
@@ -32,7 +33,7 @@ const MapComponent = () => {
       const map = new window.kakao.maps.Map(container, options);
 
       // 마커 불러오기
-      fetch("http://localhost:5000/api/reports")
+      fetch(`${API_URL}/api/reports`)
         .then((res) => res.json())
         .then((data) => {
           // 기존 마커 삭제
@@ -75,7 +76,7 @@ const MapComponent = () => {
             formData.append('timestamp', timestamp);
             formData.append('image', image);
 
-            fetch('http://localhost:5000/report', {
+            fetch(`${API_URL}/report`, {
               method: 'POST',
               body: formData
             })
